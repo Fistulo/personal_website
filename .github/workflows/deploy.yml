@@ -13,6 +13,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+          cache-dependency-path: astro/package-lock.json
+
+      - name: Install deps
+        working-directory: astro
+        run: npm ci
+
+      - name: Build
+        working-directory: astro
+        run: npm run build
+
       - name: Setup SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
@@ -36,6 +51,6 @@ jobs:
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
           DEPLOY_SSH_PORT: ${{ secrets.DEPLOY_SSH_PORT }}
         run: |
-          rsync -az --delete -e "ssh -p ${DEPLOY_SSH_PORT:-22}" \
-            --exclude '.git' \
-            site/ "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/site/"
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/id_ed25519 -p ${DEPLOY_SSH_PORT:-22} -o BatchMode=yes -o StrictHostKeyChecking=yes" \
+            astro/dist/ "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/site/"
