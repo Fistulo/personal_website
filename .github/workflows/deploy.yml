@@ -1,4 +1,4 @@
-name: Deploy static site to VPS
+name: Deploy SvelteKit site to VPS
 
 on:
   push:
@@ -18,14 +18,13 @@ jobs:
         with:
           node-version: "24"
           cache: "npm"
-          cache-dependency-path: astro/package-lock.json
 
       - name: Install deps
-        working-directory: astro
+        working-directory: svelte  # your directory
         run: npm ci
 
       - name: Build
-        working-directory: astro
+        working-directory: svelte
         run: npm run build
 
       - name: Setup SSH
@@ -53,4 +52,4 @@ jobs:
         run: |
           rsync -az --delete \
             -e "ssh -i ~/.ssh/id_ed25519 -p ${DEPLOY_SSH_PORT:-22} -o BatchMode=yes -o StrictHostKeyChecking=yes" \
-            astro/dist/ "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/site/"
+            svelte/build/ "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/site/"
