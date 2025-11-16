@@ -9,47 +9,105 @@
     isLoading?: boolean;
   };
 
-  let faq_1: FaqItem = {
-    value: "faq_1",
-    question: "Question 1?",
-    answer: "Answer to question 1.",
+  type Language = 'en' | 'de';
+  let currentLang: Language = 'de';
+
+  let openItems: string[] = [];
+
+  // Translations
+  const translations = {
+    en: {
+      title: "Lennart Lais",
+      subtitle: "mini text about me",
+      placeholder: "Ask your own question...",
+      askButton: "Ask",
+      loading: "Loading answer...",
+      error: "Sorry, I couldn't get an answer. Please try again.",
+      langButton: "DE"
+    },
+    de: {
+      title: "Lennart Lais",
+      subtitle: "Ein kleiner Text über mich",
+      placeholder: "Stelle deine eigene Frage...",
+      askButton: "Fragen",
+      loading: "Antwort wird geladen...",
+      error: "Entschuldigung, ich konnte keine Antwort erhalten. Bitte versuche es erneut.",
+      langButton: "EN"
+    }
   };
 
-  let faq_2: FaqItem = {
-    value: "faq_2",
-    question: "Question 2?",
-    answer: "Answer to question 2.",
+  $: t = (key: keyof typeof translations.en) => translations[currentLang][key];
+
+  function toggleLanguage() {
+    currentLang = currentLang === 'en' ? 'de' : 'en';
+  }
+
+  // FAQ items with translations
+  let faq_items_data = {
+    en: [
+      {
+        value: "faq_1",
+        question: "Question 1?",
+        answer: "Answer to question 1.",
+      },
+      {
+        value: "faq_2",
+        question: "Question 2?",
+        answer: "Answer to question 2.",
+      }
+    ],
+    de: [
+      {
+        value: "faq_1",
+        question: "Frage 1?",
+        answer: "Antwort auf Frage 1.",
+      },
+      {
+        value: "faq_2",
+        question: "Frage 2?",
+        answer: "Antwort auf Frage 2.",
+      }
+    ]
   };
 
-  let faq_items: FaqItem[] = [faq_1, faq_2];
+  let user_questions: FaqItem[] = [];
   let newQuestion = "";
   let isSubmitting = false;
 
-async function addQuestion() {
+  // Reactive combined items
+  $: faq_items = [...faq_items_data[currentLang], ...user_questions];
+
+  async function addQuestion() {
     if (newQuestion.trim() && !isSubmitting) {
       isSubmitting = true;
       const questionValue = `faq_${Date.now()}`;
-      
+
       // Add item with loading state
       const newItem: FaqItem = {
         value: questionValue,
         question: newQuestion,
-        answer: "Loading answer...",
+        answer: t('loading'),
         isLoading: true
       };
-      faq_items = [...faq_items, newItem];
-      
+      user_questions = [...user_questions, newItem];
+
+      openItems = [...openItems, questionValue];
+
       const currentQuestion = newQuestion;
       newQuestion = ""; // Clear input immediately
 
       try {
-        // Call backend API
+        // Call backend API with language context
         const response = await fetch('/api/ask', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ question: currentQuestion })
+          body: JSON.stringify({ 
+            question: currentLang === 'de' 
+              ? `Bitte antworte auf Deutsch: ${currentQuestion}`
+              : currentQuestion
+          })
         });
 
         if (!response.ok) {
@@ -57,20 +115,20 @@ async function addQuestion() {
         }
 
         const data = await response.json();
-        
+
         // Update the answer
-        faq_items = faq_items.map(item => 
+        user_questions = user_questions.map(item => 
           item.value === questionValue 
             ? { ...item, answer: data.answer, isLoading: false }
             : item
         );
       } catch (error) {
         console.error('Error fetching answer:', error);
-        
+
         // Update with error message
-        faq_items = faq_items.map(item => 
+        user_questions = user_questions.map(item => 
           item.value === questionValue 
-            ? { ...item, answer: "Sorry, I couldn't get an answer. Please try again.", isLoading: false }
+            ? { ...item, answer: t('error'), isLoading: false }
             : item
         );
       } finally {
@@ -87,11 +145,20 @@ async function addQuestion() {
 </script>
 
 <div class="flex flex-col items-center w-full px-4 mt-12 md:mt-20">
+  <!-- Language Toggle Button -->
+  <button
+    on:click={toggleLanguage}
+    class="fixed top-4 right-4 z-50 px-4 py-2 bg-white border-2 border-gray-300 rounded-lg font-medium hover:bg-gray-50 transition-colors shadow-sm"
+    aria-label="Toggle language"
+  >
+    {t('langButton')}
+  </button>
+
   <!-- Hero Section -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl mb-12 items-center">
     <div class="order-2 md:order-1">
-      <h1 class="text-4xl md:text-5xl font-bold mb-4">Lennart Lais</h1>
-      <p class="text-lg text-gray-600">mini text about me</p>
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">{t('title')}</h1>
+      <p class="text-lg text-gray-600">{t('subtitle')}</p>
     </div>
     <img 
       src="piohela_bild.jpg" 
@@ -101,7 +168,7 @@ async function addQuestion() {
   </div>
 
   <!-- FAQ Section -->
-  <Accordion.Root class="w-full max-w-4xl" type="multiple">
+  <Accordion.Root class="w-full max-w-4xl" type="multiple" bind:value={openItems}>
     {#each faq_items as item (item.value)}
       <Accordion.Item
         value={item.value}
@@ -138,15 +205,16 @@ async function addQuestion() {
           type="text"
           bind:value={newQuestion}
           on:keydown={handleKeydown}
-          placeholder="Ask your own question..."
-          class="flex-1 text-[15px] font-medium bg-transparent outline-none placeholder:text-gray-400"
+          placeholder={t('placeholder')}
+          disabled={isSubmitting}
+          class="flex-1 text-[15px] font-medium bg-transparent outline-none placeholder:text-gray-400 disabled:opacity-50"
         />
         <button
           on:click={addQuestion}
-          disabled={!newQuestion.trim()}
+          disabled={!newQuestion.trim() || isSubmitting}
           class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
         >
-          Ask
+          {t('askButton')}
         </button>
       </div>
     </div>

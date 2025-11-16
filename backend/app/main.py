@@ -28,6 +28,6 @@ async def ask_question(question: Question):
     answer = await answer_question(question.question)
     return Answer(answer=answer)
 
-@app.get("/health")
+@app.get("/api/health")
 async def health():
     return {"status": "ok"}
