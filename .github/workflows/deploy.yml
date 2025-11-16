@@ -1,4 +1,4 @@
-name: Deploy SvelteKit site to VPS
+name: Deploy Full Stack to VPS
 
 on:
   push:
@@ -13,6 +13,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # ===== BUILD FRONTEND =====
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -20,14 +21,15 @@ jobs:
           cache: "npm"
           cache-dependency-path: svelte/package-lock.json
 
-      - name: Install deps
-        working-directory: svelte  # your directory
+      - name: Install frontend deps
+        working-directory: svelte
         run: npm ci
 
-      - name: Build
+      - name: Build SvelteKit
         working-directory: svelte
         run: npm run build
 
+      # ===== SETUP SSH =====
       - name: Setup SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
@@ -44,7 +46,19 @@ jobs:
             ssh-keyscan -p "${DEPLOY_SSH_PORT:-22}" "$DEPLOY_HOST" >> ~/.ssh/known_hosts
           fi
 
-      - name: Rsync site files
+      # ===== DEPLOY FILES =====
+      - name: Create deployment structure on VPS
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          DEPLOY_SSH_PORT: ${{ secrets.DEPLOY_SSH_PORT }}
+        run: |
+          ssh -i ~/.ssh/id_ed25519 -p "${DEPLOY_SSH_PORT:-22}" \
+            "${DEPLOY_USER}@${DEPLOY_HOST}" \
+            "mkdir -p ${DEPLOY_PATH}/{site,backend}"
+
+      - name: Deploy frontend build
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
@@ -54,3 +68,58 @@ jobs:
           rsync -az --delete \
             -e "ssh -i ~/.ssh/id_ed25519 -p ${DEPLOY_SSH_PORT:-22} -o BatchMode=yes -o StrictHostKeyChecking=yes" \
             svelte/build/ "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/site/"
+
+      - name: Deploy backend code
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          DEPLOY_SSH_PORT: ${{ secrets.DEPLOY_SSH_PORT }}
+        run: |
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/id_ed25519 -p ${DEPLOY_SSH_PORT:-22} -o BatchMode=yes -o StrictHostKeyChecking=yes" \
+            --exclude 'venv' \
+            --exclude '__pycache__' \
+            --exclude '*.pyc' \
+            backend/ "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/backend/"
+
+      - name: Deploy Docker configs
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          DEPLOY_SSH_PORT: ${{ secrets.DEPLOY_SSH_PORT }}
+        run: |
+          rsync -az \
+            -e "ssh -i ~/.ssh/id_ed25519 -p ${DEPLOY_SSH_PORT:-22} -o BatchMode=yes -o StrictHostKeyChecking=yes" \
+            Caddyfile docker-compose.yml \
+            "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/"
+
+      - name: Create production .env file
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          DEPLOY_SSH_PORT: ${{ secrets.DEPLOY_SSH_PORT }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          ssh -i ~/.ssh/id_ed25519 -p "${DEPLOY_SSH_PORT:-22}" \
+            "${DEPLOY_USER}@${DEPLOY_HOST}" \
+            "cat > ${DEPLOY_PATH}/.env << EOF
+          DOMAIN=lennart-lais.ch
+          ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+          EOF
+          chmod 600 ${DEPLOY_PATH}/.env"
+
+
+      # ===== RESTART SERVICES =====
+      - name: Restart Docker services
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          DEPLOY_SSH_PORT: ${{ secrets.DEPLOY_SSH_PORT }}
+        run: |
+          ssh -i ~/.ssh/id_ed25519 -p "${DEPLOY_SSH_PORT:-22}" \
+            "${DEPLOY_USER}@${DEPLOY_HOST}" \
+            "cd ${DEPLOY_PATH} && docker compose down && docker compose up -d --build"

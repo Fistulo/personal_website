@@ -1,0 +1,15 @@
+#Enviroment variables
+.env
+
+#Python
+backend/venv/
+backend/app/__pycache__/
+backend/.pytest_cache/
+
+#Node
+node_modules/
+.DS_Store
+
+#Build outputs
+site/
+svelte/build/

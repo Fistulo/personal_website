@@ -6,6 +6,7 @@
     value: string;
     question: string;
     answer: string;
+    isLoading?: boolean;
   };
 
   let faq_1: FaqItem = {
@@ -22,16 +23,59 @@
 
   let faq_items: FaqItem[] = [faq_1, faq_2];
   let newQuestion = "";
+  let isSubmitting = false;
 
-  function addQuestion() {
-    if (newQuestion.trim()) {
+async function addQuestion() {
+    if (newQuestion.trim() && !isSubmitting) {
+      isSubmitting = true;
+      const questionValue = `faq_${Date.now()}`;
+      
+      // Add item with loading state
       const newItem: FaqItem = {
-        value: `faq_${Date.now()}`,
+        value: questionValue,
         question: newQuestion,
-        answer: "Loading answer..." // Placeholder for backend call
+        answer: "Loading answer...",
+        isLoading: true
       };
       faq_items = [...faq_items, newItem];
-      newQuestion = ""; // Clear input
+      
+      const currentQuestion = newQuestion;
+      newQuestion = ""; // Clear input immediately
+
+      try {
+        // Call backend API
+        const response = await fetch('/api/ask', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ question: currentQuestion })
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        
+        // Update the answer
+        faq_items = faq_items.map(item => 
+          item.value === questionValue 
+            ? { ...item, answer: data.answer, isLoading: false }
+            : item
+        );
+      } catch (error) {
+        console.error('Error fetching answer:', error);
+        
+        // Update with error message
+        faq_items = faq_items.map(item => 
+          item.value === questionValue 
+            ? { ...item, answer: "Sorry, I couldn't get an answer. Please try again.", isLoading: false }
+            : item
+        );
+      } finally {
+        isSubmitting = false;
+      }
     }
   }
 
