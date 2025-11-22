@@ -22,9 +22,14 @@ services:
       - "8000"
     environment:
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - DOMAIN=${DOMAIN:-localhost}
+      - DB_PATH=/app/db/qa_logs.db
+      - ADMIN_TOKEN=${ADMIN_TOKEN}
     volumes:
       - ./backend/data:/app/data:ro
+      - db_data:/app/db              
 
 volumes:
   caddy_data:
   caddy_config:
+  db_data:

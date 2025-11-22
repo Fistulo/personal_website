@@ -102,6 +102,7 @@ jobs:
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
           DEPLOY_SSH_PORT: ${{ secrets.DEPLOY_SSH_PORT }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ADMIN_TOKEN: ${{ secrets.ADMIN_TOKEN }}
         run: |
           ssh -i ~/.ssh/id_ed25519 -p "${DEPLOY_SSH_PORT:-22}" \
             "${DEPLOY_USER}@${DEPLOY_HOST}" \

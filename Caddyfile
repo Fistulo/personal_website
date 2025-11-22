@@ -8,6 +8,12 @@
         reverse_proxy backend:8000
     }
 
+    # Admin panel route
+    handle /admin* {
+        reverse_proxy backend:8000
+    }
+
+
     # Serve frontend static files
     handle {
         root * /srv/site
