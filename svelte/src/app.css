@@ -278,6 +278,7 @@
 		-webkit-text-size-adjust: 100%;
 		font-variation-settings: normal;
 		scrollbar-color: var(--bg-muted);
+		scrollbar-gutter: stable;
 	}
  
 	body {
@@ -305,3 +306,25 @@
 		@apply hover:text-foreground/80 focus-visible:ring-foreground focus-visible:ring-offset-background rounded-xs focus-visible:outline-hidden inline-flex items-center gap-1 font-medium underline underline-offset-4 focus-visible:ring-2 focus-visible:ring-offset-2;
 	}
 }
+
+@keyframes wave {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .loading-wave {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.3) 25%,
+      rgba(255, 255, 255, 0.5) 50%,
+      rgba(255, 255, 255, 0.3) 75%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: wave 2s linear infinite;
+  }
