@@ -17,15 +17,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class Question(BaseModel):
+class QuestionRequest(BaseModel):
     question: str
-
+    language: str
 class Answer(BaseModel):
     answer: str
 
 @app.post("/api/ask", response_model=Answer)
-async def ask_question(question: Question):
-    answer = await answer_question(question.question)
+async def ask_question(request: QuestionRequest):
+    answer = await answer_question(request.question, request.language)
     return Answer(answer=answer)
 
 @app.get("/api/health")

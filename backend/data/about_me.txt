@@ -1,1 +1,35 @@
-My skill is to build beautiful cupcakes
+Lennart Lais ist ein Mann und wurde im Juni 2001 in Deutschland geboren. Er lebt seit seinem vierten Lebensjahr in der Schweiz im Kanton Zürich und hat eine Niederlassungsbewilligung C.
+Seine Lieblingsfarbe ist Violet.
+-- Pfadi
+Lennart ist lange in die Pfadi (Verein Pfadi Säuliamt) gegangen und ist in kleineren Projekten immer noch aktiv.
+Er kam mit neun Jahren zur Pfadi. Mit 15 Jahren wurde er Gruppenleiter. Später leitete er die Piostufe, war Raiderstufenleiter und kümmerte sich um die Fortbildung der Leiter sowie die Organisation von Events. Die Pfadi hat ihm sehr viel Spass gemacht, ihn stark geprägt und er hat dort viele Freunde gefunden. In der Pfadi hat er gelernt Verantwortung zu übernehmen, im Team zu arbeiten und Dinge auf die Beine zu stellen. Er hat viele Lager geleitet und war auch im BuLa aktiv.
+Sein Pfadiname ist Fistulo.
+-- Ausbildung
+Lennart hat seine Matur an der Kantonsschule Limmattal gemacht im PAM (Physik und Mathematik) Profil. Als Maturarbeit hat er einen Rubikscube Solver gebaut.
+Nach dem Gymnasium hat er direkt mit dem Informatik Studium an der ETH angefangen. 2023 hat er seinen Bachelor abgeschlossen. Als Bachelorarbeit hat er zwei Programmiersprachen (Algot und Scratch) verglichen, die für das Lernen von Computational Thinking Skills entwickelt wurden.
+Genauer hat er verglichen, wie gut sie das Thema Rekursion vermitteln können.
+Dazu entwickelte er in beiden Sprachen Unterrichtsmaterial und setzte eine Testumgebung auf. 23 Teilnehmer zwischen 14-17 Jahren nahmen an der Studie teil. Das Resultat war, dass Algot das Thema besser vermitteln konnte.
+Die Resultate veröffentlichte er zusammen mit seinem Betreuer Sverir Thorgeirsson als Paper an der SIGCSE 2024. (Titel: Recursion in Secondary Computer Science Education: A Comparative Study of Visual Programming Approaches)
+Nach dem Bachelor hat Lennart den Informatikmaster an der ETH angefangen. Er hat 53 Credits abgeschlossen, musste aber 2025 sein Studium aufgeben und studiert jetzt nicht mehr. Er hatte Motivationsprobleme.
+-- Arbeit
+Während seinem Studium hatte Lennart verschiedene Nebenjobs. Für ein Jahr hat er für den Entlastungsdienst bei einer Familie zwei kleine Kinder betreut, eines davon mit Autismus.
+Danach hat er zwei Jahre bei Hirslanden im Park, einem Spital, drei Tage im Monat den Nachtdienst an der Reception gemacht. Ausserdem war er 1.5 Jahre bei seinem Wohnort bei der WOKO als Hausverantwortlicher angestellt und kümmerte sich um Ein-/Auszüge und andere Anliegen der Mietenden.
+Ausserdem hat er für AVM Solutions zwei Projekte gemacht. AVM Solutions ist im Bereich Business Process Automation tätig und hilft KMUs ihre Prozesse zu digitalisieren und optimieren. Für sie hat Lennart Daten aus ihren Prozessen analysiert und aufbereitet, um zu zeigen welche Insights man dadurch gewinnen kann. Dafür hat er hauptsächlich mit Python Jupyter Notebooks gearbeitet.
+In einem zweiten Projekt hat er für das Webinterface, in dem die Prozesse gesteuert und ausgeführt werden, die Grundlagen und einen Prototyp für ein automatisiertes Testingtool entwickelt. Dafür hat er Playwright benutzt und in TypeScript gearbeitet.
+Er hat seine Nebenjobs auf Februar 2026 gekündigt.
+-- Momentane Jobsuche
+Momentan sucht Lennart nach einem ca. sechs Monate langen Praktikum in der Softwareentwicklung mit dem Start im März und im Raum Zürich. Nachdem er im Studium viel theoretisches Wissen gesammelt hat, will er in einem Praktikum sein praktisches Know-How schärfen und Erfahrung in der Arbeitswelt sammeln.
+Nachdem er in seinem Studium gegen Ende mit Motivationsproblemen zu kämpfen hatte, konnte er in den letzten Monaten wieder ein gutes System aufbauen und ist nun wieder voller Energie etwas zu leisten und dazu zu lernen.
+Nach dem Praktikum will er tiefer in den Bereich Softwareentwicklung einsteigen. Es interessiert ihn, wie Systeme funktionieren. Am meisten interessiert ihn Data Infrastructure und wie die Daten verarbeitet und verwertet werden können.
+-- Programmierskills und Projekte
+Lennart hat viel Erfahrung in Python und hat im Studium unter anderem mit Java, C und C++ gearbeitet und hat die Grundskills. Er hat Erfahrungen mit Docker und Git.
+Er hat als Projekt diese Website programmiert. Das Frontend nutzt Svelte und das Backend Python FastAPI. Die Website ist auf einem VPS in Docker Containern deployed. Den Code kann man auf GitHub (https://github.com/Fistulo/personal_website) finden.
+Im Studium hat er verschiedene Projekte im Bereich Machine Learning gemacht sowie einzelne Projekte in Low Level Optimization und Security.
+-- Soft Skills
+Durch seine Zeit in der Pfadi und in seinen Nebenjobs hat Lennart viel gelernt, wie man im Team zusammenarbeitet, Erwartungen abgleicht und Aufgaben verteilt. Er kann gut kommunizieren und Verantwortung übernehmen und ist lösungsorientiert.
+-- Hobby
+Pfadi hat in Lennarts aktiver Zeit den grössten Teil seiner Wochenenden in Anspruch genommen. Abseits davon ist er sehr gerne in der Natur am Wandern und Campen. Er ist grosser Kaffeefan und hat sein eigenes Setup mit Mühle und Aeropress. Es geht sogar soweit, dass er sein Kaffeewasser filtert, um die perfekten Härtewerte zu erreichen.
+-- Wie erreichen
+Man kann Lennart über seine Email lennart.lais@gmx.ch erreichen oder über LinkedIn https://linkedin.com/in/lennart-lais-526a721b7.
+-- Sprachen
+Lennart spricht Deutsch (Muttersprache), Englisch (fliessend) und Französisch (rudimentär).

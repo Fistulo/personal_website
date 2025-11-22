@@ -104,9 +104,8 @@
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ 
-            question: currentLang === 'de' 
-              ? `Bitte antworte auf Deutsch: ${currentQuestion}`
-              : currentQuestion
+            question: currentQuestion,
+            language: currentLang === 'en' ? 'English' : 'Deutsch'
           })
         });
 
