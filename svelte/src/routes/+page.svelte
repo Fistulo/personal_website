@@ -198,7 +198,7 @@
       >
         <Accordion.Header>
           <Accordion.Trigger
-            class="flex w-full flex-1 select-none items-center justify-between py-5 px-1.5 text-lg font-medium transition-all [&[data-state=open]>span>svg]:rotate-180"
+            class="flex w-full flex-1 select-none items-center justify-between py-5 px-1.5 text-base md:text-lg lg:text-lg font-medium transition-all [&[data-state=open]>span>svg]:rotate-180"
           >
             <span class="w-full text-left">
               {item.question}
@@ -211,7 +211,7 @@
           </Accordion.Trigger>
         </Accordion.Header>
         <Accordion.Content
-          class="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-base tracking-[-0.01em]"
+          class="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm md:text-base lg:text-base tracking-[-0.01em]"
         >
           <div 
             class="px-1.5 py-5 {item.isLoading ? 'loading-wave' : ''}"
@@ -232,7 +232,8 @@
           on:keydown={handleKeydown}
           placeholder={t('placeholder')}
           disabled={isSubmitting}
-          class="flex-1 text-lg font-medium bg-transparent outline-none placeholder:text-gray-400 disabled:opacity-50 focus-overrite"
+          maxlength="150"
+          class="flex-1 text-base md:text-lg lg:text-lg font-medium bg-transparent outline-none placeholder:text-gray-400 disabled:opacity-50 focus-overrite"
           style="outline: none !important; box-shadow: none !important; border: none !important;"
         />
         <button
@@ -240,7 +241,7 @@
           on:mouseenter={handleButtonMouseEnter}
           on:mouseleave={handleButtonMouseLeave}
           disabled={!newQuestion.trim() || isSubmitting}
-          class="px-4 py-2 text-white rounded-lg text-base font-medium disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+          class="px-4 py-2 text-white rounded-lg text-base md:text-lg lg:text-lg font-medium disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
           style="background-color: {!newQuestion.trim() || isSubmitting ? '' : buttonBgColor}"
         >
           {t('askButton')}
