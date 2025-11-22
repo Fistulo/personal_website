@@ -40,7 +40,10 @@ async def answer_question(question: str, language: str) -> str:
 
         if "NO" in classification_aboutme.content[0].text:
             print(f"""Decided not about a person. Answer = {classification_aboutme.content[0].text}""")
-            return "Dieses Feature beantwortet nur Fragen über mich."
+            if language == "English":
+                return "This feature only answers questions about me."
+            else:
+                return "Dieses Feature beantwortet nur Fragen über mich."
         
         else:
             print(f"""Decided is about Lennart. Answer = {classification_aboutme.content[0].text}""")
