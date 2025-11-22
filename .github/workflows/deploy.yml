@@ -109,6 +109,7 @@ jobs:
             "cat > ${DEPLOY_PATH}/.env << EOF
           DOMAIN=lennart-lais.ch
           ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+          ADMIN_TOKEN=${ADMIN_TOKEN}
           EOF
           chmod 600 ${DEPLOY_PATH}/.env"
 
