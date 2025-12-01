@@ -1,6 +1,6 @@
 # personal_webpage
 
-Static personal website frontend (SvelteKit) + Python FastAPI backend that answers FAQ-style questions about me using the Anthropic Claude API.
+Static personal website frontend (SvelteKit) + Python FastAPI backend that answers FAQ-style questions about me using the Anthropic Claude API. Find it under lennart-lais.ch
 
 Overview
 --------
