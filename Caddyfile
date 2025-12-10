@@ -3,10 +3,14 @@
 }
 
 {$DOMAIN:localhost} {
-    
+
     # API proxy to backend container
     handle /api/* {
-        reverse_proxy backend:8000
+        reverse_proxy backend:8000 {
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+        }
     }
 
     # Serve frontend static files

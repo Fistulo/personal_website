@@ -12,6 +12,8 @@ services:
       - caddy_config:/config
     environment:
       - DOMAIN=${DOMAIN:-localhost}
+    networks:
+      - app-network
     depends_on:
       - backend
 
@@ -27,9 +29,18 @@ services:
       - ADMIN_TOKEN=${ADMIN_TOKEN}
     volumes:
       - ./backend/data:/app/data:ro
-      - db_data:/app/db              
+      - db_data:/app/db
+    networks:
+      - app-network              
 
 volumes:
   caddy_data:
   caddy_config:
   db_data:
+
+networks:
+  app-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

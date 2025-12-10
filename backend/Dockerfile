@@ -17,4 +17,4 @@ RUN mkdir -p /app/db && chmod 777 /app/db
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
 
-CMD ["fastapi", "run", "app/main.py", "--proxy-headers", "--port", "8000"]
+CMD ["fastapi", "run", "app/main.py", "--proxy-headers", "--forwarded-allow-ips", "172.20.0.0/16", "--port", "8000"]
