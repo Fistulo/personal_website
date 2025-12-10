@@ -1,28 +1,38 @@
-from dotenv import load_dotenv
-load_dotenv()
 import os
-import logging
+from dotenv import load_dotenv
 
+from fastapi import FastAPI, Request, BackgroundTasks
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from contextlib import asynccontextmanager
+
 from .llm import answer_question
 from .database import init_db, log_qa_interaction, get_recent_logs
 
-logger = logging.getLogger(__name__)
-
-app = FastAPI()
-
+load_dotenv()
+ADMIN_TOKEN = os.getenv("ADMIN_TOKEN")
 DOMAIN = os.getenv("DOMAIN", "localhost")
 
+# initializes database on startup
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_db()
+    yield
+
+
+app = FastAPI(lifespan=lifespan,
+              docs_url="/api/docs", #change doc urls since caddy sends only /api/* requests to the backend
+              redoc_url="/api/redoc",
+              openapi_url="/api/openapi.json")  
+    
+
+# CORS configuration
 if DOMAIN == "localhost":
     ALLOWED_ORIGINS = ["http://localhost"]
 else:
     ALLOWED_ORIGINS = [f"https://{DOMAIN}"]
 
-# CORS for your frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
@@ -30,43 +40,23 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 class QuestionRequest(BaseModel):
-    question: str
-    language: str
+    question: str = Field(max_length= 150)
+    language: str = Field(max_length= 50)
 
-class Answer(BaseModel):
-    answer: str
+@app.post("/api/ask")
+async def ask_question(body: QuestionRequest, request: Request, background_tasks: BackgroundTasks)-> str:
 
-@app.on_event("startup")
-async def startup_event():
-    logger.info("Initializing database...")
-    init_db()
-    logger.info("Database initialized successfully!")
-
-@app.post("/api/ask", response_model=Answer)
-async def ask_question(body: QuestionRequest, request: Request):
     answer = await answer_question(body.question, body.language)
-    log_qa_interaction(
-        question=body.question,
-        answer=answer,
-        language=body.language,
-        user_ip=request.client.host
-    )
-    return Answer(answer=answer)
+    background_tasks.add_task(log_qa_interaction, body.question, answer, body.language, request.client.host)
+    return answer
 
-@app.get("/api/health")
-async def health():
-    return {"status": "ok"}
-
-ADMIN_TOKEN = os.getenv("ADMIN_TOKEN")
-
-@app.get("/admin", response_class=HTMLResponse)
-async def admin_panel(request: Request, token: str = None):
+@app.get("/api/admin", response_class=HTMLResponse)
+async def admin_panel(token: str = None):
     if token != ADMIN_TOKEN:
         return HTMLResponse("<h1>Unauthorized</h1>", status_code=401)
 
-    logs = get_recent_logs(100)  # ← Use the new function
+    logs = get_recent_logs(100)
 
     html = """
     <html>

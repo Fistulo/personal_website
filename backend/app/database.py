@@ -2,13 +2,11 @@ import sqlite3
 import os
 from datetime import datetime
 
-# Use environment variable for DB path, with fallback
 DB_PATH = os.getenv("DB_PATH", "qa_logs.db")
 
 def get_db_connection():
-    # Ensure directory exists - FIXED VERSION
     db_dir = os.path.dirname(DB_PATH)
-    if db_dir:  # Only create if there's a directory path
+    if db_dir:
         os.makedirs(db_dir, exist_ok=True)
     
     conn = sqlite3.connect(DB_PATH)

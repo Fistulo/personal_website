@@ -132,12 +132,12 @@
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
+        const answer = await response.json();
 
         // Update the answer
         user_questions = user_questions.map(item => 
           item.value === questionValue 
-            ? { ...item, answer: data.answer, isLoading: false }
+            ? { ...item, answer: answer, isLoading: false }
             : item
         );
       } catch (error) {

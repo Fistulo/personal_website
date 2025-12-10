@@ -1,19 +1,13 @@
 import os
 from anthropic import AsyncAnthropic, APIError
-import logging
 
-logger = logging.getLogger(__name__)
-
-# Load your personal info
 with open("data/about_me.txt", "r") as f:
     ABOUT_ME = f.read()
 
 client = AsyncAnthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 async def answer_question(question: str, language: str) -> str:
-    """Answer questions about you using Claude."""
     try:
-        # STEP 1: Topic Classification mit Prefill
         classification_aboutme = await client.messages.create(
             model="claude-haiku-4-5",
             max_tokens=10,
@@ -39,14 +33,14 @@ async def answer_question(question: str, language: str) -> str:
         )
 
         if "NO" in classification_aboutme.content[0].text:
-            print(f"""Decided not about a person. Answer = {classification_aboutme.content[0].text}""")
+            #print(f"""Decided not about a person. Answer = {classification_aboutme.content[0].text}""")
             if language == "English":
                 return "This feature only answers questions about me."
             else:
                 return "Dieses Feature beantwortet nur Fragen über mich."
         
         else:
-            print(f"""Decided is about Lennart. Answer = {classification_aboutme.content[0].text}""")
+            #print(f"""Decided is about Lennart. Answer = {classification_aboutme.content[0].text}""")
             message = await client.messages.create(
                 model="claude-haiku-4-5",
                 max_tokens=300,
@@ -60,7 +54,7 @@ async def answer_question(question: str, language: str) -> str:
                     2. Bei anderen Themen (Programmieraufgaben, technische Fragen, etc.): 
                     "Dieses Feature beantwortet nur Fragen über mich."
                     3. Nutze NUR die obigen Informationen - keine Spekulationen
-                    4. Bei fehlenden Infos: "Dazu gibt es auf dieser Website keine Informationen. Am besten frage mich direkt. Kontakt: lennart.lais@gmx.ch"
+                    4. Bei fehlenden Infos: "Dazu gibt es auf dieser Website keine Informationen. Am besten frage mich direkt. Kontakt: lennart.lais@proton.me"
                     5. Antworte als ob du Lennart bist.
                     6. Kurz und präzise (1-2 Sätze) nur die nötigen Informationen.
                     7. Sprache: {language}
@@ -76,7 +70,7 @@ async def answer_question(question: str, language: str) -> str:
                     A: Dieses Feature beantwortet nur Fragen über mich. 
 
                     Q: Ist Lennart politisch aktiv?
-                    A: Dazu gibt es auf dieser Website keine Informationen. Am besten frage mich direkt. Kontakt: lennart.lais@gmx.ch
+                    A: Dazu gibt es auf dieser Website keine Informationen. Am besten frage mich direkt. Kontakt: lennart.lais@proton.me
                     """,
                 messages=[
                     {
@@ -88,8 +82,6 @@ async def answer_question(question: str, language: str) -> str:
             return message.content[0].text
     
     except APIError as e:
-        logger.error(f"Anthropic API error: {e}")
         return "Sorry, I'm having trouble answering right now. Please try again later."
     except Exception as e:
-        logger.error(f"Unexpected error: {e}")
         return "An unexpected error occurred. Please try again."

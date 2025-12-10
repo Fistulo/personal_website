@@ -3,16 +3,11 @@
 }
 
 {$DOMAIN:localhost} {
+    
     # API proxy to backend container
     handle /api/* {
         reverse_proxy backend:8000
     }
-
-    # Admin panel route
-    handle /admin* {
-        reverse_proxy backend:8000
-    }
-
 
     # Serve frontend static files
     handle {
